@@ -1,3 +1,8 @@
+Version 2.0.16
+==============
+  * Implement wandder_timeval_to_generalizedts() method to convert a timeval
+    into its corresponding GeneralizedTime string representation
+
 Version 2.0.15
 ==============
   * ETSILI: add new API methods -- wandder_etsili_get_encryption_container()
