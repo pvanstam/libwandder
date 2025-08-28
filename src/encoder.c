@@ -387,7 +387,8 @@ static inline uint32_t encode_integer(wandder_encode_job_t *p, void *valptr,
 }
 
 static inline int encode_time_inline(
-        uint32_t len, struct timeval *tv, char* returnbuf, int time_format) {
+        uint32_t len, struct timeval *tv, char* returnbuf, int time_format,
+        int retbuflen) {
     
     struct tm tm;
     time_t tstamp;
@@ -405,22 +406,26 @@ static inline int encode_time_inline(
         return 0;
     }
 
-    strftime(timebuf, 768, "%y%m%d%H%M%S", &tm);
+    strftime(timebuf, 768, "%Y%m%d%H%M%S", &tm);
 
     switch (time_format) {
         case WANDDER_G_TIME: 
-            snprintf(returnbuf, 1024, "%s.%03" PRId64 "Z", timebuf,
+            snprintf(returnbuf, retbuflen, "%s.%03" PRId64 "Z", timebuf,
                     (int64_t)(tv->tv_usec / 1000));
             break;
         default:
             fprintf(stderr, 
                 "Encode error: unexpected format for timeval, using UTC\n");
         case WANDDER_UTC_TIME:
-            snprintf(returnbuf, 1024, "%sZ", timebuf);
+            snprintf(returnbuf, retbuflen, "%sZ", timebuf);
             break;
     }
 
     return strlen(returnbuf);
+}
+
+int wandder_timeval_to_generalizedts(struct timeval *tv, char *gts, int space) {
+    return encode_time_inline(sizeof(struct timeval), tv, gts, WANDDER_G_TIME, space);
 }
 
 static uint32_t encode_time(wandder_encode_job_t *p, void *valptr,
@@ -429,7 +434,7 @@ static uint32_t encode_time(wandder_encode_job_t *p, void *valptr,
     struct timeval *tv = (struct timeval *)valptr;
     char timebuf[1024];
 
-    int towrite = encode_time_inline(len, tv, timebuf, time_format);
+    int towrite = encode_time_inline(len, tv, timebuf, time_format, 1024);
     if (towrite == 0)
         return  0;
 
@@ -447,7 +452,7 @@ static uint32_t encode_time_ber(void *valptr,
     size_t ret;
     char timebuf[1024];
 
-    int towrite = encode_time_inline(len, tv, timebuf, time_format);
+    int towrite = encode_time_inline(len, tv, timebuf, time_format, 1024);
     if (towrite == 0)
         return  0;
 

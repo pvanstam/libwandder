@@ -1,3 +1,9 @@
+libwandder2 (2.0.16-1) unstable; urgency=medium
+
+  * Add new API method: wandder_timeval_to_generalizedts()
+
+ -- Shane Alcock <shane@alcock.co.nz>  Thu, 28 Aug 2025 14:51:02 +1200
+
 libwandder2 (2.0.15-1) unstable; urgency=medium
 
   * ETSILI: add new API methods -- wandder_etsili_get_encryption_container()
